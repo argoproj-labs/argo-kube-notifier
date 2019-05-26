@@ -1,0 +1,3 @@
+version: "0.01"
+domain: io
+repo: github.com/argoproj/kube-notifier

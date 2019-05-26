@@ -1,0 +1,188 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: notifications.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: Notification
+    plural: notifications
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          properties:
+            kubeConfigPath:
+              type: string
+            monitorResource:
+              type: object
+            namespace:
+              type: string
+            notifiers:
+              items:
+                properties:
+                  email:
+                    properties:
+                      fromEmailId:
+                        type: string
+                      passwordSecret:
+                        type: object
+                      senderList:
+                        items:
+                          type: string
+                        type: array
+                      smtphost:
+                        type: string
+                      smtpport:
+                        format: int64
+                        type: integer
+                      usernameSecret:
+                        type: object
+                    required:
+                    - usernameSecret
+                    - passwordSecret
+                    type: object
+                  name:
+                    type: string
+                  slack:
+                    properties:
+                      channel:
+                        type: string
+                      hookurl:
+                        type: string
+                      token:
+                        type: string
+                    type: object
+                required:
+                - name
+                type: object
+              type: array
+            rules:
+              items:
+                properties:
+                  allConditions:
+                    items:
+                      properties:
+                        childConditions:
+                          items:
+                            type: object
+                          type: array
+                        joinOperator:
+                          type: string
+                        jsonPath:
+                          type: string
+                        operator:
+                          type: string
+                        value:
+                          type: string
+                        valueJsonPath:
+                          type: string
+                      type: object
+                    type: array
+                  anyConditions:
+                    items:
+                      properties:
+                        childConditions:
+                          items:
+                            type: object
+                          type: array
+                        joinOperator:
+                          type: string
+                        jsonPath:
+                          type: string
+                        operator:
+                          type: string
+                        value:
+                          type: string
+                        valueJsonPath:
+                          type: string
+                      type: object
+                    type: array
+                  events:
+                    items:
+                      properties:
+                        emailSubject:
+                          type: string
+                        message:
+                          type: string
+                        notificationLevel:
+                          type: string
+                        notifierNames:
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    type: array
+                  initialDelaySec:
+                    format: int64
+                    type: integer
+                  name:
+                    type: string
+                  throttleMintues:
+                    format: int64
+                    type: integer
+                required:
+                - name
+                - initialDelaySec
+                - throttleMintues
+                type: object
+              type: array
+          type: object
+        status:
+          properties:
+            RuleStatus:
+              description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                of cluster Important: Run "make" to regenerate code after modifying
+                this file'
+              items:
+                properties:
+                  activeTriggers:
+                    items:
+                      properties:
+                        lastTriggered:
+                          format: date-time
+                          type: string
+                        name:
+                          type: string
+                      required:
+                      - name
+                      - lastTriggered
+                      type: object
+                    type: array
+                  name:
+                    type: string
+                  triggeredCount:
+                    format: int64
+                    type: integer
+                required:
+                - name
+                - triggeredCount
+                - activeTriggers
+                type: object
+              type: array
+          required:
+          - RuleStatus
+          type: object
+  version: v1alpha1
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

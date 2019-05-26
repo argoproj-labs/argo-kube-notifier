@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Notification
+metadata:
+  name: notification-1
+spec:
+  Namespace: 'default'
+  monitorResource:
+    Group: ''
+    Resource: 'pods'
+    Version: 'v1'
+  rules:
+    -
+      name: 'rule1'
+      initialDelaySec: 3
+      throttleMintues: 2
+      allConditions:
+        -
+          jsonPath: 'status/phase'
+          operator: 'eq'
+          value: 'Succeeded'
+      events:
+        -
+          message: 'Pod= {{.metadata.name}} succesfully completed. {{.status.phase}}'
+          emailSubject: 'Argo Notification Condition Triggered {{.metadata.name}}'
+          notificationLevel: info
+          notifierNames:
+            - slack
+
+  notifiers:
+    -
+      name: slack
+      slack:
+        hookurl: 'https://hooks.slack.com/services/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'
+        channel: testargonotification
