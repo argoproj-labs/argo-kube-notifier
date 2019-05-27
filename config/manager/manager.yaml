@@ -2,21 +2,21 @@ apiVersion: v1
 kind: Namespace
 metadata:
   labels:
-    control-plane: controller-manager
+    control-plane: kube-notifier-controller
     controller-tools.k8s.io: "1.0"
-  name: system
+  name: argo
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: controller-manager-service
-  namespace: system
+  name: kube-notifier-controller-service
+  namespace: argo
   labels:
-    control-plane: controller-manager
+    control-plane: kube-notifier-controller
     controller-tools.k8s.io: "1.0"
 spec:
   selector:
-    control-plane: controller-manager
+    control-plane: kube-notifier-controller
     controller-tools.k8s.io: "1.0"
   ports:
   - port: 443
@@ -24,27 +24,27 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: controller-manager
-  namespace: system
+  name: kube-notifier-controller
+  namespace: argo
   labels:
-    control-plane: controller-manager
+    control-plane: kube-notifier-controller
     controller-tools.k8s.io: "1.0"
 spec:
   selector:
     matchLabels:
-      control-plane: controller-manager
+      control-plane: kube-notifier-controller
       controller-tools.k8s.io: "1.0"
-  serviceName: controller-manager-service
+  serviceName: kube-notifier-controller-service
   template:
     metadata:
       labels:
-        control-plane: controller-manager
+        control-plane: kube-notifier-controller
         controller-tools.k8s.io: "1.0"
     spec:
       containers:
       - command:
         - /manager
-        image: controller:latest
+        image: sarabala1979/argo-kube-notifier:latest
         imagePullPolicy: Always
         name: manager
         env:
@@ -69,15 +69,22 @@ spec:
         - mountPath: /tmp/cert
           name: cert
           readOnly: true
+        - mountPath: /etc/ssl/certs
+          name: ca-certs
+          readOnly: true
       terminationGracePeriodSeconds: 10
       volumes:
       - name: cert
         secret:
           defaultMode: 420
           secretName: webhook-server-secret
+      - hostPath:
+          path: /etc/ssl/certs
+        name: ca-certs
+
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: webhook-server-secret
-  namespace: system
+  namespace: argo
