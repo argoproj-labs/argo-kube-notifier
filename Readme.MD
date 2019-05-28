@@ -13,11 +13,11 @@ Argo Kube Notifier will monitor each resource's update and apply rules on update
 ## Quickstart
 ```bash
 kubectl create namespace argo
-kubectl create -f https://raw.githubusercontent.com/sarabala1979/argo-kube-notifier/master/config/crds/argoproj_v1alpha1_notification.yaml
-kubectl apply -n argo -f https://raw.githubusercontent.com/sarabala1979/argo-kube-notifier/master/config/manager/manager.yaml
+kubectl create -f https://raw.githubusercontent.com/argoproj-labs/argo-kube-notifier/master/config/crds/argoproj_v1alpha1_notification.yaml
+kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj-labs/argo-kube-notifier/master/config/manager/manager.yaml
 ```
 
-#Create notification
+## Create Notification
 
 example: [notification](https://raw.githubusercontent.com/sarabala1979/argo-kube-notifier/master/example/notification_deployment.yaml)
 
@@ -82,6 +82,7 @@ spec:
   # Define the notifiers channel. Slack and email is supporting currently
     rules:
       -
+        Name: rule2
         anyconditions:
           -
             jsonpath: "status/phase"
