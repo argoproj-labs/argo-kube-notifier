@@ -41,6 +41,7 @@ spec:
         control-plane: kube-notifier-controller
         controller-tools.k8s.io: "1.0"
     spec:
+      serviceAccountName: argo
       containers:
       - command:
         - /manager
