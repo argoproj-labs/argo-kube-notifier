@@ -2,26 +2,35 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Notification
 metadata:
-  name: notification-2
+  name: notification-1
 spec:
+  # Define resource need to be monitor.
   monitorResource:
     Group: argoproj.io
     Resource: workflows
     Version: v1alpha1
+  #
   Namespace: default
+  # Define the notifiers channel. Slack and email is supporting currently
   notifiers:
     -
       name: slack
       slack:
         channel: testargonotification
-        hookurl: "https://hooks.slack.com/services/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"
+        hookurl: "https://hooks.slack.com"
+  # Define the Rules to validate the resource spce
   rules:
     -
+      # Define multiple condition with AND
       allConditions:
         -
+          # Json Path for element need to validate
           jsonPath: status/phase
+          # Operator
           operator: eq
+          # value
           value: Succeeded
+      # Define the Events which will trigger if above conditions met
       events:
         -
           emailSubject: "Argo Notification Condition Triggered {{.metadata.name}}"
@@ -29,6 +38,5 @@ spec:
           notificationLevel: info
           notifierNames:
             - slack
-      initialDelaySec: 3
+      # Unique Rule Name per Notification
       name: rule1
-      throttleMintues: 2

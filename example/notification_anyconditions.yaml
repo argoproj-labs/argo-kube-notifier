@@ -1,0 +1,56 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Notification
+metadata:
+  name: notification-2
+spec:
+  # Define resource need to be monitor.
+  monitorResource:
+    Group: argoproj.io
+    Resource: workflows
+    Version: v1alpha1
+  #
+  Namespace: default
+  # Define the notifiers channel. Slack and email is supporting currently
+    rules:
+      -
+        anyconditions:
+          -
+            jsonpath: "status/phase"
+            operator: "eq"
+            value: "Failed"
+          -
+            jsonpath: "status/phase"
+            operator: "eq"
+            value: "Error"
+        events:
+          -
+            message: "Workflow ={{.metadata.name}} Failed."
+            emailSubject: "[ALERT] Argo Notification Condition Triggered {{.metadata.name}}"
+            notificationLevel: "critical"
+            notifierNames:
+              - "slack"
+              - "email"
+
+    notifiers:
+      -
+        name: "slack"
+        slack:
+          hookurl: "https://hooks.slack.com/services/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"
+          channel: "demokubenotifier"
+      -
+        name: "email"
+        email:
+          smtphost: "smtp.gmail.com"
+          smtpport: 465
+          # Save the smtp service credential in secret in monitoring namespace
+          usernameSecret:
+            name: "my-email-secret"
+            key: "username"
+          passwordSecret:
+            name: "my-email-secret"
+            key: "password"
+          FromEmailId: <EmailID>
+          SenderList:
+            - <EmailID>
+            - <EmailID>
