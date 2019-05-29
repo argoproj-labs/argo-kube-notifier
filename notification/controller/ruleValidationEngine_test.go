@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/antchfx/jsonquery"
-	"github.com/argoproj/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
+	"github.com/argoproj-labs/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
 	"strings"
 	"testing"
 )

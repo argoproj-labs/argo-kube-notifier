@@ -23,7 +23,7 @@ resources:
 - ../manager/manager.yaml
   # Comment the following 3 lines if you want to disable
   # the auth proxy (https://github.com/brancz/kube-rbac-proxy)
-  # which protects your /metrics endpoint.
+# which protects your /metrics endpoint.
 - ../rbac/auth_proxy_service.yaml
 - ../rbac/auth_proxy_role.yaml
 - ../rbac/auth_proxy_role_binding.yaml

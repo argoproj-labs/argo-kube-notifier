@@ -105,7 +105,7 @@ spec:
       -
         name: "slack"
         slack:
-          hookurl: "https://hooks.slack.com/services/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"
+          hookurl: "https://hooks.slack.com"
           channel: "demokubenotifier"
       -
         name: "email"

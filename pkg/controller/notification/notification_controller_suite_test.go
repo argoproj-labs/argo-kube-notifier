@@ -22,7 +22,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/argoproj/argo-kube-notifier/pkg/apis"
+	"github.com/argoproj-labs/argo-kube-notifier/pkg/apis"
 	"github.com/onsi/gomega"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"

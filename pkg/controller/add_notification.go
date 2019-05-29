@@ -16,7 +16,7 @@ limitations under the License.
 package controller
 
 import (
-	"github.com/argoproj/argo-kube-notifier/pkg/controller/notification"
+	"github.com/argoproj-labs/argo-kube-notifier/pkg/controller/notification"
 )
 
 func init() {

@@ -17,8 +17,8 @@ package notification
 
 import (
 	"context"
-	controller2 "github.com/argoproj/argo-kube-notifier/notification/controller"
-	argoprojv1alpha1 "github.com/argoproj/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
+	controller2 "github.com/argoproj-labs/argo-kube-notifier/notification/controller"
+	argoprojv1alpha1 "github.com/argoproj-labs/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"

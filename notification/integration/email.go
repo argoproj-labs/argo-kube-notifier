@@ -1,7 +1,7 @@
 package integration
 
 import (
-	"github.com/argoproj/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
+	"github.com/argoproj-labs/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
 	"gopkg.in/gomail.v2"
 	"k8s.io/client-go/kubernetes"
 )

@@ -19,9 +19,9 @@ import (
 	"flag"
 	"os"
 
-	"github.com/argoproj/argo-kube-notifier/pkg/apis"
-	"github.com/argoproj/argo-kube-notifier/pkg/controller"
-	"github.com/argoproj/argo-kube-notifier/pkg/webhook"
+	"github.com/argoproj-labs/argo-kube-notifier/pkg/apis"
+	"github.com/argoproj-labs/argo-kube-notifier/pkg/controller"
+	"github.com/argoproj-labs/argo-kube-notifier/pkg/webhook"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"

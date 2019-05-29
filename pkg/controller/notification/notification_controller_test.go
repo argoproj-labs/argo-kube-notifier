@@ -19,7 +19,7 @@ import (
 	"testing"
 	"time"
 
-	argoprojv1alpha1 "github.com/argoproj/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
+	argoprojv1alpha1 "github.com/argoproj-labs/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
 	"github.com/onsi/gomega"
 	"golang.org/x/net/context"
 	appsv1 "k8s.io/api/apps/v1"
