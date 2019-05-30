@@ -64,10 +64,10 @@ spec:
                     properties:
                       channel:
                         type: string
-                      hookurl:
-                        type: string
-                      token:
-                        type: string
+                      hookUrlSecret:
+                        type: object
+                      tokenSecret:
+                        type: object
                     type: object
                 required:
                 - name

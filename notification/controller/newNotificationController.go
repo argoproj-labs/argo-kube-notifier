@@ -94,19 +94,28 @@ func (nnc *NewNotificationController) getNotifier(notification v1alpha1.Notifica
 
 	for _, notifier := range notification.Spec.Notifier {
 		if &notifier.Slack != nil {
-			notifierMap[notifier.Name] = integration.NewSlackClient(&notifier.Slack)
+			config, err := config2.GetConfig()
+			if err != nil {
+
+			}
+			client, err := kubernetes.NewForConfig(config)
+			namespace := "default"
+			if notification.Namespace != "" {
+				namespace = notification.Namespace
+			}
+			notifierMap[notifier.Name] = integration.NewSlackClient(client, namespace, &notifier.Slack)
 		}
 		if &notifier.Email != nil {
-			//config, err := config2.GetConfig()
-			//if err != nil {
-			//
-			//}
-			//client, err := kubernetes.NewForConfig(config)
-			//namespace := "default"
-			//if notification.Namespace != "" {
-			//	namespace = notification.Namespace
-			//}
-			//notifierMap[notifier.Name] = integration.NewEmailClient(client, namespace, notifier.Email)
+			config, err := config2.GetConfig()
+			if err != nil {
+
+			}
+			client, err := kubernetes.NewForConfig(config)
+			namespace := "default"
+			if notification.Namespace != "" {
+				namespace = notification.Namespace
+			}
+			notifierMap[notifier.Name] = integration.NewEmailClient(client, namespace, &notifier.Email)
 		}
 	}
 	return notifierMap

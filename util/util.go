@@ -10,7 +10,7 @@ import (
 )
 
 // GetSecrets retrieves a secret value and memoizes the result
-func GetSecrets1(clientSet kubernetes.Interface, namespace, name, key string) ([]byte, error) {
+func GetSecrets(clientSet kubernetes.Interface, namespace, name, key string) ([]byte, error) {
 	secretsIf := clientSet.CoreV1().Secrets(namespace)
 	var secret *apiv1.Secret
 	var err error

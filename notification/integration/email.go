@@ -2,6 +2,8 @@ package integration
 
 import (
 	"github.com/argoproj-labs/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
+	"github.com/argoproj-labs/argo-kube-notifier/util"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 	"k8s.io/client-go/kubernetes"
 )
@@ -13,21 +15,21 @@ type EmailClient struct {
 
 func NewEmailClient(clientSet kubernetes.Interface, namespace string, emailConfig *v1alpha1.EmailNotifier) *EmailClient {
 	emailClient := EmailClient{}
-	//emailClient.Config = emailConfig
-	//userNameBytes, err := util.GetSecrets(clientSet, namespace, emailConfig.UserNameSecret.Name, emailConfig.UserNameSecret.Key)
-	//if err != nil {
-	//
-	//}
-	//passwordBytes, err := util.GetSecrets(clientSet, namespace, emailConfig.PasswordSecret.Name, emailConfig.PasswordSecret.Key)
-	//if err != nil {
-	//
-	//}
-	//emailClient.Client = gomail.NewPlainDialer(emailConfig.SmtpHost, emailConfig.SmtpPort, string(userNameBytes), string(passwordBytes))
-	////emailClient.Client.SSL = true
-	//if emailClient.Client == nil {
-	//	panic("Failed to create Email client")
-	//
-	//}
+	emailClient.Config = emailConfig
+	userNameBytes, err := util.GetSecrets(clientSet, namespace, emailConfig.UserNameSecret.Name, emailConfig.UserNameSecret.Key)
+	if err != nil {
+		log.Warnf("Username secret failed to read. %v", err)
+	}
+	passwordBytes, err := util.GetSecrets(clientSet, namespace, emailConfig.PasswordSecret.Name, emailConfig.PasswordSecret.Key)
+	if err != nil {
+		log.Warnf("Password secret failed to read. %v", err)
+	}
+	emailClient.Client = gomail.NewPlainDialer(emailConfig.SmtpHost, emailConfig.SmtpPort, string(userNameBytes), string(passwordBytes))
+	//emailClient.Client.SSL = true
+	if emailClient.Client == nil {
+		panic("Failed to create Email client")
+
+	}
 	return &emailClient
 }
 

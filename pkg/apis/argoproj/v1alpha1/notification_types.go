@@ -94,9 +94,9 @@ type Notifier struct {
 }
 
 type SlackNotifier struct {
-	HookUrl string `json:"hookurl,omitempty"`
-	Token   string `json:"token,omitempty"`
-	Channel string `json:"channel,omitempty"`
+	HookUrlSecret apiv1.SecretKeySelector `json:"hookUrlSecret,omitempty"`
+	TokenSecret   apiv1.SecretKeySelector `json:"tokenSecret,omitempty"`
+	Channel       string                  `json:"channel,omitempty"`
 }
 
 type EmailNotifier struct {

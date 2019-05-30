@@ -45,5 +45,5 @@ vars:
 - name: WEBHOOK_SECRET_NAME
   objref:
     kind: Secret
-    name: webhook-server-secret
+    name: kube-notifier-webhook-server-secret
     apiVersion: v1
