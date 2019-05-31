@@ -1,7 +1,7 @@
 
 # Argo-Kube-Notifier - Monitor kubernetes resources and get notification
 ## What is Argo Kube Notifier?
-Argo Kube Notifier controller monitors Kubernetes resources spec value change and validate the configured rules to trigger events.  
+Argo Kube Notifier controller monitors Kubernetes resources update and validate the configured rules to trigger events.  
 
 ## Why use Argo Kube Notifier?
 Argo Kube Notifier is fully customize monitoring tool based on all kinds of Kubernetes resource. 
