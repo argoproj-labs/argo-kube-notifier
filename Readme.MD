@@ -1,7 +1,7 @@
 
 # Argo-Kube-Notifier - Monitor kubernetes resources and get notification
 ## What is Argo Kube Notifier?
-Argo Kube Notifier controller monitors Kubernetes resources change and validate the configured rules to trigger events.  
+Argo Kube Notifier controller monitors Kubernetes resources update and validate the configured rules to trigger events.  
 
 ## Why use Argo Kube Notifier?
 Argo Kube Notifier is fully customize monitoring tool based on all kinds of Kubernetes resource. 
@@ -29,10 +29,10 @@ metadata:
   name: notification-1
 spec:
   # Define resource need to be monitor.
-  monitorResource:
-    Group: argoproj.io
-    Resource: workflows
-    Version: v1alpha1
+  MonitorResource:
+    Group:    "apps"
+    Resource: "deployments"
+    Version:  "v1"
   #
   Namespace: default
   # Define the notifiers channel. Slack and email is supporting currently
@@ -45,24 +45,38 @@ spec:
   # Define the Rules to validate the resource spce
   rules:
     -
-      # Define multiple condition with AND
-      allConditions:
+      allconditions:
         -
-          # Json Path for element need to validate
-          jsonPath: status/phase
-          # Operator
-          operator: eq
-          # value
-          value: Succeeded
-      # Define the Events which will trigger if above conditions met
+          jsonpath: "status/readyReplicas"
+          operator: "ne"
+          valueJsonPath: "status/replicas"
+
       events:
         -
+          message: "Condition Triggered : Deployment = {{.metadata.name}} replicaset doesnt match. Required Replicas = {{.status.replicas}}, Current Replicas={{.status.readyReplicas}}"
           emailSubject: "Argo Notification Condition Triggered {{.metadata.name}}"
-          message: "Workflow = {{.metadata.name}} succesfully completed"
-          notificationLevel: info
+          notificationLevel: "warning"
           notifierNames:
-            - slack
-      # Unique Rule Name per Notification
+            - "slack"
+    -
+      allconditions:
+        -
+          jsonpath: "metadata/name"
+          operator: "eq"
+          value: "nginx-deployment"
+        -
+          jsonpath: "{{status/readyReplicas}} / {{ }}"
+          operator: "lt"
+          value: "30%"
+
+      events:
+        -
+          message: "Condition Triggered : Deployment ={{.metadata.name}} replicaset doesnt match. Required Replicas = {{.status.replicas}}, Current Replicas={{.status.readyReplicas}}"
+          emailSubject: "[ALERT] Argo Notification Condition Triggered {{.metadata.name}}"
+          notificationLevel: "critical"
+          notifierNames:
+            - "slack"
+
       name: rule1
 ```
 #### Notification 2- Any Conditions with Slack and Email
