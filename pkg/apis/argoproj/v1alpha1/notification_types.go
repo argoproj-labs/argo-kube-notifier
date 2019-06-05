@@ -88,9 +88,9 @@ type NotificationConfig struct {
 }
 
 type Notifier struct {
-	Name  string        `json:"name"`
-	Slack SlackNotifier `json:"slack,omitempty"`
-	Email EmailNotifier `json:"email,omitempty"`
+	Name  string         `json:"name"`
+	Slack *SlackNotifier `json:"slack,omitempty"`
+	Email *EmailNotifier `json:"email,omitempty"`
 }
 
 type SlackNotifier struct {
@@ -110,8 +110,8 @@ type EmailNotifier struct {
 
 type Rule struct {
 	Name            string      `json:"name"`
-	InitialDelaySec int         `json:"initialDelaySec"`
-	ThrottleMinutes int         `json:"throttleMintues"`
+	InitialDelaySec int         `json:"initialDelaySec,omitempty"`
+	ThrottleMinutes int         `json:"throttleMintues,omitempty"`
 	AllConditions   []Condition `json:"allConditions,omitempty"`
 	AnyConditions   []Condition `json:"anyConditions,omitempty"`
 	Events          []Event     `json:"events,omitempty"`

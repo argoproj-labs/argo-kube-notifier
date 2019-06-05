@@ -4,9 +4,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/util/retry"
+	config2 "sigs.k8s.io/controller-runtime/pkg/client/config"
 )
 
 // GetSecrets retrieves a secret value and memoizes the result
@@ -18,7 +22,7 @@ func GetSecrets(clientSet kubernetes.Interface, namespace, name, key string) ([]
 		secret, err = secretsIf.Get(name, metav1.GetOptions{})
 		if err != nil {
 			log.Warnf("Failed to get secret '%s': %v", name, err)
-			return false, nil
+			return false, err
 		}
 		return true, nil
 	})
@@ -31,4 +35,19 @@ func GetSecrets(clientSet kubernetes.Interface, namespace, name, key string) ([]
 		return []byte{}, nil
 	}
 	return val, nil
+}
+
+func GetObject(resource schema.GroupVersionResource, namespace, name string) (*unstructured.Unstructured, error) {
+
+	config, err := config2.GetConfig()
+	if err != nil {
+		panic(err.Error())
+	}
+	clientset, err := dynamic.NewForConfig(config)
+	if err != nil {
+		panic(err)
+	}
+	api := clientset.Resource(resource)
+	return api.Namespace(namespace).Get(name, metav1.GetOptions{})
+
 }

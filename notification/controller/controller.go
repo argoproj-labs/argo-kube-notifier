@@ -6,6 +6,7 @@ import (
 	"github.com/antchfx/jsonquery"
 	"github.com/argoproj-labs/argo-kube-notifier/notification/integration"
 	"github.com/argoproj-labs/argo-kube-notifier/pkg/apis/argoproj/v1alpha1"
+	"github.com/argoproj-labs/argo-kube-notifier/util"
 	log "github.com/sirupsen/logrus"
 	"html/template"
 	apiv1 "k8s.io/api/core/v1"
@@ -22,14 +23,11 @@ import (
 	"time"
 )
 
-const (
-	NOTIFICATION_LEVEL_INFO     = "info"
-	NOTIFICATION_LEVEL_WARNING  = "warning"
-	NOTIFICATION_LEVEL_CRITICAL = "critical"
-)
+const DELAY_WATCH_EVENT = "DELAY_WATCH"
 
 type NewNotificationController struct {
 	ObjectQueue        workqueue.RateLimitingInterface
+	DelayQueue         workqueue.RateLimitingInterface
 	ResourceMap        map[string]map[string]v1alpha1.Notification
 	ResourceChanMap    map[string]chan struct{}
 	NotifierMap        map[string]map[string]integration.NotifierInterface
@@ -93,7 +91,7 @@ func (nnc *NewNotificationController) getNotifier(notification v1alpha1.Notifica
 	var notifierMap = make(map[string]integration.NotifierInterface)
 
 	for _, notifier := range notification.Spec.Notifier {
-		if &notifier.Slack != nil {
+		if notifier.Slack != nil {
 			config, err := config2.GetConfig()
 			if err != nil {
 
@@ -103,9 +101,9 @@ func (nnc *NewNotificationController) getNotifier(notification v1alpha1.Notifica
 			if notification.Namespace != "" {
 				namespace = notification.Namespace
 			}
-			notifierMap[notifier.Name] = integration.NewSlackClient(client, namespace, &notifier.Slack)
+			notifierMap[notifier.Name] = integration.NewSlackClient(client, namespace, notifier.Slack)
 		}
-		if &notifier.Email != nil {
+		if notifier.Email != nil {
 			config, err := config2.GetConfig()
 			if err != nil {
 
@@ -115,7 +113,7 @@ func (nnc *NewNotificationController) getNotifier(notification v1alpha1.Notifica
 			if notification.Namespace != "" {
 				namespace = notification.Namespace
 			}
-			notifierMap[notifier.Name] = integration.NewEmailClient(client, namespace, &notifier.Email)
+			notifierMap[notifier.Name] = integration.NewEmailClient(client, namespace, notifier.Email)
 		}
 	}
 	return notifierMap
@@ -146,9 +144,10 @@ func (nnc *NewNotificationController) processObject(event watch.Event, resourceN
 	if !ok {
 		return
 	}
+	delayValidation := event.Type == DELAY_WATCH_EVENT
 	for i := range notifications {
 		notification := notifications[i]
-		nnc.processingNotification(event, notification)
+		nnc.processingNotification(event, notification, delayValidation)
 	}
 	//for i := range notifications {
 	//	notification := notifications[i]
@@ -173,28 +172,48 @@ func (nnc *NewNotificationController) processObject(event watch.Event, resourceN
 	//}
 }
 
-func (nnc *NewNotificationController) processingNotification(event watch.Event, notification v1alpha1.Notification) {
+func (nnc *NewNotificationController) processingNotification(event watch.Event, notification v1alpha1.Notification, delayValidation bool) {
 
 	jsonObject, err := json.Marshal(event.Object)
 	if err != nil {
 		log.Error(err)
 	}
-	nnc.processRules(jsonObject, notification)
+	nnc.processRules(jsonObject, notification, delayValidation)
 
 }
 
-func (nnc *NewNotificationController) processRules(jsonByte []byte, notification v1alpha1.Notification) {
+func (nnc *NewNotificationController) processRules(jsonByte []byte, notification v1alpha1.Notification, delayValidation bool) {
 	doc, _ := jsonquery.Parse(strings.NewReader(string(jsonByte)))
-
+	name := jsonquery.FindOne(doc, "metadata/name")
 	for _, rule := range notification.Spec.Rules {
 
 		if ValidateRule(&rule, doc) {
+			if rule.InitialDelaySec > 0 && !delayValidation {
+				go nnc.delayTrigger(rule.InitialDelaySec, notification.Spec.MonitorResource, notification.Namespace, name.InnerText())
+				continue
+			}
 			log.Infof("Rule met condition. Event will be trigger. NotificationName=%s, Rule=%v", notification.Name, rule)
+
 			nnc.processEvents(rule.Events, jsonByte, notification.Name)
 
 		}
 
 	}
+}
+
+func (nnc *NewNotificationController) delayTrigger(delay int, resource schema.GroupVersionResource, namespace, name string) {
+	time.Sleep(time.Duration(delay) * time.Second)
+	object, err := util.GetObject(resource, namespace, name)
+	if err != nil {
+		log.Warnf("Error occured getting resource. %v", err)
+		return
+	}
+	event := watch.Event{
+		Type:   DELAY_WATCH_EVENT,
+		Object: object,
+	}
+	nnc.ObjectQueue.Add(event)
+
 }
 
 func (nnc *NewNotificationController) processEvents(events []v1alpha1.Event, jsonByte []byte, name string) {
@@ -236,14 +255,13 @@ func (nnc *NewNotificationController) SubsutiteString(rawmsg string, jsonMap map
 
 func (nc *NewNotificationController) SendMessage(notificationLevel string, integration integration.NotifierInterface, message ...string) {
 	switch notificationLevel {
-	case NOTIFICATION_LEVEL_INFO:
+	case v1alpha1.NOTIFICATION_LEVEL_INFO:
 		integration.SendSuccessNotification(message...)
-	case NOTIFICATION_LEVEL_WARNING:
+	case v1alpha1.NOTIFICATION_LEVEL_WARNING:
 		integration.SendWarningNotification(message...)
-	case NOTIFICATION_LEVEL_CRITICAL:
+	case v1alpha1.NOTIFICATION_LEVEL_CRITICAL:
 		integration.SendFailledNotification(message...)
 	}
-
 }
 
 func (nm *NewNotificationController) retrieveLastSyncResourceVersion() {

@@ -12,45 +12,46 @@ spec:
   #
   Namespace: default
   # Define the notifiers channel. Slack and email is supporting currently
-    rules:
-      -
-        anyconditions:
-          -
-            jsonpath: "status/phase"
-            operator: "eq"
-            value: "Failed"
-          -
-            jsonpath: "status/phase"
-            operator: "eq"
-            value: "Error"
-        events:
-          -
-            message: "Workflow ={{.metadata.name}} Failed."
-            emailSubject: "[ALERT] Argo Notification Condition Triggered {{.metadata.name}}"
-            notificationLevel: "critical"
-            notifierNames:
-              - "slack"
-              - "email"
-
-    notifiers:
-      -
-        name: "slack"
-        slack:
-          hookurl: "https://hooks.slack.com"
-          channel: "demokubenotifier"
-      -
-        name: "email"
-        email:
-          smtphost: "smtp.gmail.com"
-          smtpport: 465
-          # Save the smtp service credential in secret in monitoring namespace
-          usernameSecret:
-            name: "my-email-secret"
-            key: "username"
-          passwordSecret:
-            name: "my-email-secret"
-            key: "password"
-          FromEmailId: <EmailID>
-          SenderList:
-            - <EmailID>
-            - <EmailID>
+  rules:
+    -
+      name: rule1
+      anyConditions:
+        -
+          jsonPath: status/phase
+          operator: eq
+          value: Failed
+        -
+          jsonPath: status/phase
+          operator: eq
+          value: Error
+      events:
+        -
+          message: "Workflow ={{.metadata.name}} Failed."
+          emailSubject: "[ALERT] Argo Notification Condition Triggered {{.metadata.name}}"
+          notificationLevel: "warning"
+          notifierNames:
+            - "slack"
+            - "email"
+  notifiers:
+    -
+      name: slack
+      slack:
+        hookUrlSecret:
+          name: my-slack-secret
+          key: hookURL
+        channel: testargonotification
+    -
+      name: email
+      email:
+        smtphost: smtp.gmail.com
+        smtpport: 465
+        # Save the smtp service credential in secret in monitoring namespace
+        usernameSecret:
+          name: my-email-secret
+          key: username
+        passwordSecret:
+          name: my-email-secret
+          key: password
+        FromEmailId: sarabala1979@gmail.com
+        SenderList:
+          - saravanan_balasubramanian@intuit.com
