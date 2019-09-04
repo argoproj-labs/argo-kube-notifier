@@ -21,6 +21,18 @@ kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj-labs/argo-ku
 
 example: [notification](https://raw.githubusercontent.com/sarabala1979/argo-kube-notifier/master/example/notification_deployment.yaml)
 
+Create secreats for Slack and Emails
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-slack-secret
+type: Opaque
+stringData:
+  hookURL: "https://hooks.slack.com/" #update your slack hookurl
+```
+
+
 #### Simple Slack Notification with All Condition
 ```
 apiVersion: argoproj.io/v1alpha1
@@ -40,7 +52,11 @@ spec:
     -
       name: slack
       slack:
+        hookUrlSecret:
+          name: my-slack-secret
+          key: hookURL
         channel: testargonotification
+        
         hookurl: "https://hooks.slack.com"
   # Define the Rules to validate the resource spce
   rules:
@@ -80,7 +96,7 @@ spec:
       name: rule1
 ```
 #### Notification 2- Any Conditions with Slack and Email
-```$xslt
+```
 apiVersion: argoproj.io/v1alpha1
 kind: Notification
 metadata:
@@ -117,10 +133,12 @@ spec:
 
     notifiers:
       -
-        name: "slack"
-        slack:
-          hookurl: "https://hooks.slack.com"
-          channel: "demokubenotifier"
+       name: slack
+       slack:
+         hookUrlSecret:
+           name: my-slack-secret
+           key: hookURL
+         channel: testargonotification
       -
         name: "email"
         email:
