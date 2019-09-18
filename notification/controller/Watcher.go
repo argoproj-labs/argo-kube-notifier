@@ -34,25 +34,30 @@ func (w *Watcher) watch() {
 		return
 	}
 	for {
-		w.createWatcher()
+		err := w.createWatcher()
+		if err != nil {
+			log.Error(err)
+			break
+
+		}
 		w.runWatch()
 	}
 }
 
-func (w *Watcher) createWatcher() {
+func (w *Watcher) createWatcher() error {
 	config, err := config2.GetConfig()
 	if err != nil {
 		panic(err.Error())
 	}
 	clientset, err := dynamic.NewForConfig(config)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	api := clientset.Resource(*w.resource)
 
 	listStruct, err := api.List(v1.ListOptions{})
 	if err != nil || listStruct == nil {
-		return
+		return err
 	}
 	w.lastSyncVersion = listStruct.GetResourceVersion()
 	fmt.Println(w.lastSyncVersion)
@@ -61,7 +66,9 @@ func (w *Watcher) createWatcher() {
 		Watch(v1.ListOptions{ResourceVersion: w.lastSyncVersion})
 	if err != nil {
 		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
 func (w *Watcher) runWatch() {
