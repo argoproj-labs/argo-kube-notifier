@@ -1,11 +1,11 @@
 
 # Argo-Kube-Notifier - Monitor kubernetes resources and get notification
 ## What is Argo Kube Notifier?
-Argo Kube Notifier controller monitors Kubernetes resources update and validate the configured rules to trigger events.  
+Argo Kube Notifier controller monitors Kubernetes resource updates and validates the configured rules to trigger events.  
 
 ## Why use Argo Kube Notifier?
-Argo Kube Notifier is fully customize monitoring tool based on all kinds of Kubernetes resource. 
-Argo Kube Notifier will monitor each resource's update and apply rules on updates. Event will be trigged if rule met.
+Argo Kube Notifier is a fully customizable monitoring tool based on all kinds of Kubernetes resources. 
+Argo Kube Notifier will monitor each resource's updates and apply rules on updates. Events will be trigged if a rule is met.
  
  
 
@@ -21,7 +21,7 @@ kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj-labs/argo-ku
 
 example: [notification](https://raw.githubusercontent.com/sarabala1979/argo-kube-notifier/master/example/notification_deployment.yaml)
 
-Create secreats for Slack and Emails
+Create secrets for Slack and Email
 ```
 apiVersion: v1
 kind: Secret
@@ -33,7 +33,7 @@ stringData:
 ```
 
 
-#### Simple Slack Notification with All Condition
+#### Simple Slack Notification with All Conditions
 ```
 apiVersion: argoproj.io/v1alpha1
 kind: Notification
@@ -95,7 +95,7 @@ spec:
 
       name: rule1
 ```
-#### Notification 2- Any Conditions with Slack and Email
+#### Notification 2 - Any Conditions with Slack and Email
 ```
 apiVersion: argoproj.io/v1alpha1
 kind: Notification
