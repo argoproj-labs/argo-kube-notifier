@@ -61,9 +61,9 @@ spec:
   # Define the Rules to validate the resource spce
   rules:
     -
-      allconditions:
+      allConditions:
         -
-          jsonpath: "status/readyReplicas"
+          jsonPath: "status/readyReplicas"
           operator: "ne"
           valueJsonPath: "status/replicas"
 
@@ -75,13 +75,13 @@ spec:
           notifierNames:
             - "slack"
     -
-      allconditions:
+      allConditions:
         -
-          jsonpath: "metadata/name"
+          jsonPath: "metadata/name"
           operator: "eq"
           value: "nginx-deployment"
         -
-          jsonpath: "{{status/readyReplicas}} / {{ }}"
+          jsonPath: "{{status/readyReplicas}} / {{ }}"
           operator: "lt"
           value: "30%"
 
@@ -113,20 +113,20 @@ spec:
     rules:
       -
         Name: rule2
-        anyconditions:
+        anyConditions:
           -
-            jsonpath: "status/phase"
+            jsonPath: "status/phase"
             operator: "eq"
             value: "Failed"
           -
-            jsonpath: "status/phase"
+            jsonPath: "status/phase"
             operator: "eq"
             value: "Error"
         events:
           -
             message: "Workflow ={{.metadata.name}} Failed."
             emailSubject: "[ALERT] Argo Notification Condition Triggered {{.metadata.name}}"
-            notificationLevel: "critical"
+            notificationLevel: "warning"
             notifierNames:
               - "slack"
               - "email"
