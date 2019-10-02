@@ -239,8 +239,11 @@ func (nnc *NewNotificationController) ProcessEvent(event v1alpha1.Event, jsonByt
 	notifierMap := nnc.NotifierMap[name]
 
 	for _, notifierName := range event.NotifierNames {
+		log.Debugf("Sending a message to %s", notifierName)
 		if notifier, ok := notifierMap[notifierName]; ok {
 			nnc.SendMessage(event.NotificationLevel, notifier, message, subject)
+		} else {
+			log.Warnf("Notifier not found: %s", notifierName)
 		}
 	}
 }
@@ -261,6 +264,8 @@ func (nc *NewNotificationController) SendMessage(notificationLevel string, integ
 		integration.SendWarningNotification(message...)
 	case v1alpha1.NOTIFICATION_LEVEL_CRITICAL:
 		integration.SendFailledNotification(message...)
+	default:
+		log.Warnf("Unknown notification level: %s", notificationLevel)
 	}
 }
 
