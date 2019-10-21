@@ -12,7 +12,7 @@ func ValidateCondition(condition *v1alpha1.Condition, node *jsonquery.Node) bool
 	if condition == nil {
 		return false
 	}
-	log.Debugf("Validating condition %v on node %s", condition, node)
+	log.Debugf("Validating condition %v on node %v", condition, node)
 
 	validateNode := jsonquery.Find(node, condition.Jsonpath)
 	if len(validateNode) == 0 {
@@ -77,7 +77,7 @@ func ValidateRule(rule *v1alpha1.Rule, node *jsonquery.Node) bool {
 	if rule == nil {
 		return false
 	}
-	log.Debugf("Validating rule %s on node %s", rule.Name, node)
+	log.Debugf("Validating rule %s on node %v", rule.Name, node)
 	status := false
 	if len(rule.AllConditions) > 0 {
 		log.Debug("Checking all conditions")
