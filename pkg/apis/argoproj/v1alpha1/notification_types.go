@@ -111,7 +111,7 @@ type EmailNotifier struct {
 type Rule struct {
 	Name            string      `json:"name"`
 	InitialDelaySec int         `json:"initialDelaySec,omitempty"`
-	ThrottleMinutes int         `json:"throttleMintues,omitempty"`
+	ThrottleMinutes int         `json:"throttleMinutes,omitempty"`
 	AllConditions   []Condition `json:"allConditions,omitempty"`
 	AnyConditions   []Condition `json:"anyConditions,omitempty"`
 	Events          []Event     `json:"events,omitempty"`
