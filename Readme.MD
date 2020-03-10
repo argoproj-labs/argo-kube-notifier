@@ -74,6 +74,10 @@ spec:
           notificationLevel: "warning"
           notifierNames:
             - "slack"
+
+      name: rule1
+      initialDelaySec: 60
+      throttleMinutes: 5
     -
       allConditions:
         -
@@ -93,7 +97,9 @@ spec:
           notifierNames:
             - "slack"
 
-      name: rule1
+      name: rule2
+      initialDelaySec: 60
+      throttleMinutes: 5
 ```
 #### Notification 2 - Any Conditions with Slack and Email
 ```
@@ -112,7 +118,9 @@ spec:
   # Define the notifiers channel. Slack and email is supporting currently
     rules:
       -
-        Name: rule2
+        name: rule1
+        initialDelaySec: 60
+        throttleMinutes: 5
         anyConditions:
           -
             jsonPath: "status/phase"
