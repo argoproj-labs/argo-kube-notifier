@@ -134,13 +134,13 @@ spec:
                     type: integer
                   name:
                     type: string
-                  throttleMintues:
+                  throttleMinutes:
                     format: int64
                     type: integer
                 required:
                 - name
                 - initialDelaySec
-                - throttleMintues
+                - throttleMinutes
                 type: object
               type: array
           type: object
