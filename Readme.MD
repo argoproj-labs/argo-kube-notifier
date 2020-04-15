@@ -41,7 +41,7 @@ metadata:
   name: notification-1
 spec:
   # Define resource need to be monitor.
-  MonitorResource:
+  monitorResource:
     Group:    "apps"
     Resource: "deployments"
     Version:  "v1"

@@ -42,6 +42,8 @@ spec:
         channel: testargonotification
     -
       name: email
+      initialDelaySec: 60
+      throttleMinutes: 5
       email:
         smtphost: smtp.gmail.com
         smtpport: 465
