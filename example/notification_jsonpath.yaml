@@ -42,3 +42,5 @@ spec:
             - slack
       # Unique Rule Name per Notification
       name: rule1
+      initialDelaySec: 60
+      throttleMinutes: 5
